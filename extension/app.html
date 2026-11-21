@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dia Transfer</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="icons/48.png" width="32" height="32" alt="">
+    <div>
+      <h1>Dia Transfer</h1>
+      <p class="sub">Copia marcadores y extensiones de otro perfil a este, directamente.</p>
+    </div>
+  </header>
+
+  <div class="notice" id="hostError" hidden>
+    <b>No encuentro el ayudante local.</b>
+    <span id="hostErrorText"></span>
+    Ejecuta <code>./install.sh</code> en la carpeta del proyecto y recarga esta página.
+    Mientras tanto puedes importar desde un archivo exportado.
+  </div>
+
+  <div class="route">
+    <div class="field">
+      <label for="src">Desde</label>
+      <select id="src"></select>
+    </div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="field">
+      <label>Hacia</label>
+      <div class="here" id="here">Este perfil</div>
+    </div>
+    <div class="route-actions">
+      <button class="btn ghost small" id="exportBtn" title="Guarda los marcadores y la lista de extensiones de este perfil en un archivo">Exportar este perfil</button>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="bm">Marcadores <span class="pill" id="bmPill"></span></button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="ext">Extensiones <span class="pill" id="extPill"></span></button>
+  </div>
+
+  <section id="tab-bm">
+    <div class="card">
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="Buscar por nombre o dominio…">
+        <label class="chk"><input type="checkbox" id="hideDup" checked> Ocultar los que ya tengo</label>
+        <button class="link" id="all">Todo</button>
+        <button class="link" id="none">Nada</button>
+      </div>
+      <div class="tree" id="tree"><div class="empty">Cargando…</div></div>
+    </div>
+    <div class="options">
+      <span class="opt-label">Dónde ponerlos</span>
+      <label class="radio"><input type="radio" name="mode" value="merge" checked> Mezclar con mis carpetas <small>(las carpetas con el mismo nombre se unen)</small></label>
+      <label class="radio"><input type="radio" name="mode" value="folder"> En una carpeta nueva <small id="folderName"></small></label>
+    </div>
+  </section>
+
+  <section id="tab-ext" hidden>
+    <div class="card" id="extList"><div class="empty">Cargando…</div></div>
+    <p class="hint">Por seguridad, el navegador no deja que nadie instale extensiones sin tu permiso. Cada una se abre en la Chrome Web Store de este perfil y solo tienes que pulsar <b>Añadir</b>. La lista se actualiza sola. Los ajustes de extensiones con cuenta (Bitwarden, Raindrop…) vuelven al iniciar sesión.</p>
+  </section>
+</div>
+
+<div class="bar" id="bar"><div class="in">
+  <div class="sum" id="sum"></div>
+  <button class="btn ghost" id="undo" hidden>Deshacer último</button>
+  <button class="btn" id="go" disabled>Copiar a este perfil</button>
+</div></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Dia Transfer",
+  "description": "Copy bookmarks and extensions from one browser profile to another, directly.",
+  "version": "1.0.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq4FvjIVY0yrNrX3hXRlpCtYHhQnaoeaL1vLa/xyRCSmnerSqFFsBfesaKIv6VdfyFs/oio/SkxG47K9VR4fnW0Ls+T/Bz17kv5Q2auDcOdNEgr2wH0hBB8AKGklt3hn76v3wiDP7t+5CgKXseFu6+Fva5d043/s/5PH7DT0xk2j6fEGYOKMTH1XRp4pZBSNJIrWJqakF6932WV2ujg3hoAiBMkEiOpUIBRxwhR9KZwpzJefF6i0wnzr8vOmKUWeYr71yNxlZ5w1H1pfktLkpldaO9M47UjCZbY2kL26TGGB8D/8R82dK7ks/8xyIhnTJn+Yu0q7C1YuHcre3CCs6WwIDAQAB",
+  "permissions": ["bookmarks", "management", "nativeMessaging", "storage"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Dia Transfer", "default_icon": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" } },
+  "icons": { "16": "icons/16.png", "32": "icons/32.png", "48": "icons/48.png", "128": "icons/128.png" }
+}
