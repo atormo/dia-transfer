@@ -11,6 +11,7 @@ Made for [Dia](https://www.diabrowser.com/), works with any Chromium browser on 
 
 - **Bookmarks:** pick what to copy from any other profile (whole folders or single links). Links you already have are hidden. Copies straight into the current profile, merging folders with the same name or into a new folder. One-click **Undo**.
 - **Extensions:** shows which extensions the other profile has and this one doesn't. Browsers don't allow silent installs, so each one opens in the Chrome Web Store of this profile and you just click *Add*. The list updates as you install.
+- **Load missing icons:** bookmarks only get their icon after you visit the site. *Load icons* visits the ones still showing a globe in a minimized window (4 at a time), then removes those visits from your history. Works on all bookmarks of the profile, not only copied ones.
 - **Export / import a file:** save a profile to a `.json` file to move it to another Mac.
 
 ## Install
@@ -84,6 +85,7 @@ Pulsa el icono 🔁 de Dia Transfer en la barra → elige qué copiar → **Copi
 
 - **Marcadores:** elige el perfil de origen, marca carpetas o enlaces (los que ya tienes salen ocultos) y pulsa **Copiar a este perfil**. Puedes mezclarlos con tus carpetas o meterlos en una carpeta nueva. Si te equivocas, **Deshacer último**.
 - **Extensiones:** ves cuáles te faltan y cada una se abre en la Chrome Web Store de este perfil para pulsar *Añadir*.
+- **Cargar iconos:** los marcadores solo tienen icono cuando visitas la web. Este botón visita en una ventana minimizada los que salen con el globo y luego borra esas visitas del historial. Vale para todos los marcadores del perfil.
 - **Exportar este perfil:** guarda un `.json` para llevarlo a otro Mac e importarlo desde el selector “Desde”.
 
 Todo se queda en tu Mac: el ayudante local solo lee, no se conecta a internet y solo responde a esta extensión.

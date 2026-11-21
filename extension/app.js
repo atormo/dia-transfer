@@ -86,6 +86,7 @@ async function init() {
   fillSourceSelect(hostOk);
   await showUndo();
   selectSource($("#src").value);
+  showIconsButton();
 }
 
 function fillSourceSelect() {
@@ -253,6 +254,7 @@ $("#go").onclick = async () => {
     await refreshDest();
     selectSource(state.srcKey);
     await showUndo();
+    showIconsButton();
   } catch (e) {
     toast(`Error: ${e.message}`);
   } finally {
@@ -284,6 +286,92 @@ $("#undo").onclick = async () => {
   selectSource(state.srcKey);
   await showUndo();
 };
+
+// ---------- favicons ----------
+// The browser only stores a site's icon after visiting it. We find bookmarks whose icon
+// is still the generic globe and visit them in a minimized background window.
+const favUrl = (u) => chrome.runtime.getURL(`/_favicon/?pageUrl=${encodeURIComponent(u)}&size=32`);
+const bytes = async (u) => new Uint8Array(await (await fetch(u)).arrayBuffer());
+const same = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+let defaultIcon = null;
+let iconRun = null; // { cancel: bool } while loading
+
+async function missingIcons() {
+  try {
+    defaultIcon ??= await bytes(favUrl("https://dia-transfer.invalid/"));
+  } catch { return []; } // favicon API not available
+  const all = (await chrome.bookmarks.search({})).filter((b) => /^https?:/.test(b.url || ""));
+  const seen = new Set(), out = [];
+  for (const b of all) {
+    if (seen.has(b.url)) continue;
+    seen.add(b.url);
+    try { if (same(await bytes(favUrl(b.url)), defaultIcon)) out.push(b.url); } catch { /* ignore */ }
+  }
+  return out;
+}
+
+async function showIconsButton() {
+  if (iconRun) return;
+  const miss = await missingIcons();
+  const btn = $("#icons");
+  btn.hidden = miss.length === 0;
+  btn.textContent = `Cargar iconos (${miss.length})`;
+  btn.dataset.count = miss.length;
+}
+
+function visit(windowId, url) {
+  return new Promise(async (resolve) => {
+    let tab, done = false;
+    const finish = async () => {
+      if (done) return; done = true;
+      chrome.tabs.onUpdated.removeListener(onUpd);
+      await new Promise((r) => setTimeout(r, 1500)); // icon arrives just after load
+      try { await chrome.tabs.remove(tab.id); } catch {}
+      resolve();
+    };
+    const onUpd = (id, info) => { if (tab && id === tab.id && info.status === "complete") finish(); };
+    chrome.tabs.onUpdated.addListener(onUpd);
+    try {
+      tab = await chrome.tabs.create({ windowId, url, active: false });
+      chrome.tabs.update(tab.id, { muted: true }).catch(() => {});
+    } catch { done = true; chrome.tabs.onUpdated.removeListener(onUpd); return resolve(); }
+    setTimeout(finish, 15000); // slow sites: give up after 15 s
+  });
+}
+
+async function loadIcons() {
+  const urls = await missingIcons();
+  if (!urls.length) return showIconsButton();
+  if (!confirm(`Se abrirán ${urls.length} webs en una ventana minimizada, de 4 en 4, para guardar su icono. Tarda un poco. Las visitas nuevas se borran del historial al terminar. ¿Seguimos?`)) return;
+  const btn = $("#icons");
+  iconRun = { cancel: false };
+  // Remember which URLs were never visited, to clean the history afterwards.
+  const fresh = [];
+  for (const url of urls) if ((await chrome.history.getVisits({ url })).length === 0) fresh.push(url);
+
+  let win;
+  try { win = await chrome.windows.create({ url: "about:blank", state: "minimized", focused: false }); }
+  catch { win = await chrome.windows.create({ url: "about:blank", focused: false }); }
+
+  let next = 0, doneCount = 0;
+  btn.textContent = `Cancelar (0/${urls.length})`;
+  const worker = async () => {
+    while (next < urls.length && !iconRun.cancel) {
+      await visit(win.id, urls[next++]);
+      btn.textContent = `Cancelar (${++doneCount}/${urls.length})`;
+    }
+  };
+  await Promise.all([worker(), worker(), worker(), worker()]);
+  try { await chrome.windows.remove(win.id); } catch {}
+  for (const url of fresh) { try { await chrome.history.deleteUrl({ url }); } catch {} }
+  const cancelled = iconRun.cancel;
+  iconRun = null;
+  await showIconsButton();
+  const left = Number($("#icons").dataset.count || 0);
+  toast(cancelled ? "Carga de iconos cancelada" : left ? `Listo. ${left} webs no tienen icono o no cargaron.` : "✓ Iconos cargados");
+}
+
+$("#icons").onclick = () => { if (iconRun) iconRun.cancel = true; else loadIcons(); };
 
 // ---------- extensions ----------
 async function renderExt() {
