@@ -20,6 +20,8 @@ fi
 
 mkdir -p "$APP_DIR"
 cp "$HERE/host/host.py" "$APP_DIR/host.py"
+# Keep a copy of the extension in a fixed place, so the downloaded folder can be deleted.
+rm -rf "$APP_DIR/extension" && cp -R "$HERE/extension" "$APP_DIR/extension"
 chmod 755 "$APP_DIR/host.py"
 
 found=0
@@ -63,7 +65,7 @@ Listo. Ahora carga la extensión en el perfil DESTINO (solo una vez):
   1. Abre  chrome://extensions  en ese perfil
   2. Activa "Modo de desarrollador" (arriba a la derecha)
   3. Pulsa "Cargar descomprimida" y elige esta carpeta:
-     $HERE/extension
+     $APP_DIR/extension
   4. Haz clic en el icono de Dia Transfer en la barra.
 
 MSG

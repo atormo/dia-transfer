@@ -21,12 +21,15 @@ cd dia-transfer
 ./install.sh
 ```
 
-Then, in the profile you want to copy **into**:
+Or just double-click **`Instalar Dia Transfer.command`** (if you downloaded the ZIP: right-click → Open the first time).
+
+Then, in the profile you want to copy **into** (only once):
 
 1. Open `chrome://extensions`
 2. Turn on **Developer mode**
-3. Click **Load unpacked** and choose the `extension` folder
-4. Click the Dia Transfer icon in the toolbar
+3. Click **Load unpacked**, press Cmd+Shift+G, paste (the path is already copied) and open:
+   `~/Library/Application Support/DiaTransfer/extension`
+4. Click the Dia Transfer icon in the toolbar. That's it — from now on, it's one click.
 
 Repeat steps 1–3 in any other profile you want to copy into. Requires Python 3 (`xcode-select --install` if you don't have it).
 
@@ -67,22 +70,17 @@ Not affiliated with The Browser Company. MIT license.
 
 Copia **marcadores** y **extensiones** de un perfil del navegador a otro, directamente, sin exportar ni importar archivos.
 
-### Instalar
+### Instalar (una vez)
 
-```sh
-git clone https://github.com/atormo/dia-transfer.git
-cd dia-transfer
-./install.sh
-```
+1. Descarga el proyecto (botón verde **Code → Download ZIP**) y descomprímelo.
+2. Doble clic en **`Instalar Dia Transfer.command`** (la primera vez: clic derecho → Abrir).
+3. En Dia, en el perfil **al que quieres copiar**: abre `chrome://extensions`, activa **Modo de desarrollador**, pulsa **Cargar descomprimida**, luego Cmd+Shift+G, pega (Cmd+V) y Abrir.
 
-Después, en el perfil **al que quieres copiar**:
+### Usar (siempre)
 
-1. Abre `chrome://extensions`
-2. Activa **Modo de desarrollador**
-3. Pulsa **Cargar descomprimida** y elige la carpeta `extension`
-4. Haz clic en el icono de Dia Transfer
+Pulsa el icono 🔁 de Dia Transfer en la barra → elige qué copiar → **Copiar a este perfil**.
 
-### Uso
+### Qué puedes hacer
 
 - **Marcadores:** elige el perfil de origen, marca carpetas o enlaces (los que ya tienes salen ocultos) y pulsa **Copiar a este perfil**. Puedes mezclarlos con tus carpetas o meterlos en una carpeta nueva. Si te equivocas, **Deshacer último**.
 - **Extensiones:** ves cuáles te faltan y cada una se abre en la Chrome Web Store de este perfil para pulsar *Añadir*.
