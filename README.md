@@ -16,7 +16,7 @@ Made for [Dia](https://www.diabrowser.com/), works with any Chromium browser on 
 ## Install
 
 ```sh
-git clone https://github.com/<you>/dia-transfer.git
+git clone https://github.com/atormo/dia-transfer.git
 cd dia-transfer
 ./install.sh
 ```
@@ -70,7 +70,7 @@ Copia **marcadores** y **extensiones** de un perfil del navegador a otro, direct
 ### Instalar
 
 ```sh
-git clone https://github.com/<tu-usuario>/dia-transfer.git
+git clone https://github.com/atormo/dia-transfer.git
 cd dia-transfer
 ./install.sh
 ```
