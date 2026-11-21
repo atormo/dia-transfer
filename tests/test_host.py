@@ -57,5 +57,15 @@ class HostTest(unittest.TestCase):
         self.assertFalse(r["ok"])
 
 
+class AppOfTest(unittest.TestCase):
+    def test_first_app_bundle_wins(self):
+        sys.path.insert(0, str(HOST.parent))
+        import host
+        self.assertEqual(host.app_of("/Applications/Dia.app/Contents/Frameworks/ArcCore.framework/Helpers/X.app/Contents/MacOS/X"), "Dia")
+        self.assertEqual(host.app_of("/Applications/Arc.app/Contents/MacOS/Arc"), "Arc")
+        self.assertEqual(host.app_of("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), "Google Chrome")
+        self.assertIsNone(host.app_of("/bin/zsh"))
+
+
 if __name__ == "__main__":
     unittest.main()

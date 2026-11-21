@@ -9,11 +9,58 @@ chrome.bookmarks API, inside the profile where it runs.
 Usage (set up by install.sh):  host.py <path to the browser's "User Data" folder>
 """
 import json
+import os
 import struct
 import sys
 from pathlib import Path
 
-USER_DATA = next((Path(a) for a in sys.argv[1:] if not a.startswith("chrome-extension://")), None)
+import re
+import subprocess
+
+SUPPORT = Path.home() / "Library" / "Application Support"
+# Name of the browser's .app bundle -> its "User Data" folder
+BROWSERS = {
+    "Dia": SUPPORT / "Dia" / "User Data",
+    "Arc": SUPPORT / "Arc" / "User Data",
+    "Google Chrome": SUPPORT / "Google" / "Chrome",
+    "Google Chrome Beta": SUPPORT / "Google" / "Chrome Beta",
+    "Brave Browser": SUPPORT / "BraveSoftware" / "Brave-Browser",
+    "Microsoft Edge": SUPPORT / "Microsoft Edge",
+    "Chromium": SUPPORT / "Chromium",
+    "Vivaldi": SUPPORT / "Vivaldi",
+}
+
+
+def app_of(command: str):
+    """'/Applications/Dia.app/Contents/Frameworks/ArcCore.framework/…' -> 'Dia' (first .app wins)."""
+    m = re.search(r"/([^/]+)\.app/", command)
+    return m.group(1) if m else None
+
+
+def browser_from_parents():
+    """Some browsers (Dia) also read Chrome's host folder, so the configured path
+    can be the wrong browser. Ask the OS which app actually started us."""
+    pid = os.getppid()
+    for _ in range(6):
+        try:
+            out = subprocess.run(["ps", "-o", "ppid=,comm=", "-p", str(pid)],
+                                 capture_output=True, text=True, timeout=2).stdout.strip()
+        except Exception:
+            return None
+        if not out:
+            return None
+        ppid, _, comm = out.partition(" ")
+        app = app_of(comm.strip())
+        if app in BROWSERS:
+            return BROWSERS[app] if (BROWSERS[app] / "Local State").exists() else None
+        pid = int(ppid)
+        if pid <= 1:
+            return None
+    return None
+
+
+_configured = next((Path(a) for a in sys.argv[1:] if not a.startswith("chrome-extension://")), None)
+USER_DATA = browser_from_parents() or _configured
 
 
 # ---------- native messaging protocol: 4-byte length + JSON ----------
